@@ -14,17 +14,15 @@ void handleClient(Socket client, Router router) {
           router.findGetController(req.path)(req, res);
           break;
       }
-      res.makeResponse();
 
-      client.write(res.response);
+      client.write(res.makeResponse());
+      if (res.header["contentType"] == "image/jpeg") client.add(res.body);
       client.close();
     },
     onError: (error) {
       print(error);
       client.close();
     },
-    onDone: () {
-      print('Client disconnected');
-    },
+    onDone: () {},
   );
 }

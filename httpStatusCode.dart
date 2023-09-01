@@ -1,0 +1,22 @@
+Map<int, String> httpStatusCode = {
+  100: "Continue",
+  101: "Switching Protocol",
+  102: "Processing",
+  200: "OK",
+  201: "Created",
+  202: "Accepted",
+  203: "Non-Authoritative Information",
+  204: "No Content",
+  205: "Reset Content",
+  206: "Partial Content",
+  300: "Multiple choices",
+  301: "Moved Permanently",
+  302: "Found",
+  303: "See Other",
+  304: "Not Modified",
+  307: "Temporary Redirect",
+  308: "Permanent Redirect",
+  400: "Bad Request",
+  404: "Not Found",
+  500: "Internal Server Error"
+};

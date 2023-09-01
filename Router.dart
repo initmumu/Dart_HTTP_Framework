@@ -15,14 +15,13 @@ class Router {
     this.getRouteInfo[urlPath] = controller;
   }
 
-  void printroute() {
-    print(this.getRouteInfo);
-  }
-
   Function findGetController(String urlPath) {
     if (this.getRouteInfo.containsKey(urlPath)) {
       return this.getRouteInfo[urlPath];
     }
-    return () => {};
+    return (req, res) {
+      res.status(404);
+      res.text("1234");
+    };
   }
 }
