@@ -7,6 +7,10 @@ final int PORT = 8080;
 void main() {
   final app = Dattp();
 
+  app.post('/post-test', (req, res) {
+    res.text("post test");
+  });
+
   app.get('/pororo', (req, res) {
     var filePath = 'public/jpeg_test_image.jpg';
     var imageFile = File(filePath).readAsBytesSync();
