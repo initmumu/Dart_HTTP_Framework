@@ -23,6 +23,8 @@ void main() {
 
 **Developer Nickname** initmumu
 
+**Github** [https://github.com/initmumu](https://github.com/initmumu)
+
 **Organization** KyungHee University CSE
 
 ## 프로젝트 정보
@@ -55,10 +57,6 @@ void main() {
     - Text
     - Json
     - Binary Stream
-
-## 정보
-
-initmumu – [Github](https://github.com/initmumu) – bshookhu@gmail.com
 
 ## 기여 방법
 
