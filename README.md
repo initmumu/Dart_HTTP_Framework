@@ -29,7 +29,9 @@ void main() {
 
 **Development Start** 2023.09
 
-**Language** <img src="https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white">
+**Language**
+
+<img src="https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white">
 
 ## 설치 방법
 
