@@ -1,4 +1,5 @@
 import '../Exception/CanNotFoundPathLayer.dart';
+import '../Exception/ParameterError.dart';
 import '../Request.dart';
 import '../Response.dart';
 import '../DefaultHandler/notFoundHandler.dart';
@@ -33,20 +34,29 @@ class Router {
     currentPathLayer.setController(controller);
   }
 
-  PathLayer findGetPathLayer(String urlPath) {
-    var urlSplited;
-    if (this.isRoot(urlPath))
-      urlSplited = [];
-    else {
-      urlSplited = urlPath.split('/');
-      urlSplited.removeAt(0);
-    }
+  PathLayer findGetPathLayer(Request req) {
+    String urlPath = req.requestPath;
+    if (this.isRoot(urlPath)) return this.rootGetPathLayer;
+
+    var urlSplited = urlPath.split('/');
+    urlSplited.removeAt(0);
 
     PathLayer currentPathLayer = this.rootGetPathLayer;
     while (urlSplited.length != 0) {
-      if (!currentPathLayer.subPath.containsKey(urlSplited[0]))
+      String? nextPath;
+      print(currentPathLayer.curPath);
+      if (!currentPathLayer.subPath.containsKey(urlSplited[0]) &&
+          !currentPathLayer.hasVariableLayer) {
         throw CanNotFoundPathLayer();
-      currentPathLayer = currentPathLayer.subPath[urlSplited[0]]!;
+      }
+      if (currentPathLayer.hasVariableLayer) {
+        nextPath = ":${currentPathLayer.variableLayerName}";
+        req.params[currentPathLayer.variableLayerName] = urlSplited[0];
+      } else {
+        nextPath = urlSplited[0];
+      }
+      currentPathLayer = currentPathLayer.subPath[nextPath]!;
+
       urlSplited.removeAt(0);
     }
     return currentPathLayer;
@@ -64,9 +74,9 @@ class Router {
     this.postRouteInfo[urlPath] = controller;
   }
 
-  Function findGetController(String urlPath) {
+  Function findGetController(Request req) {
     try {
-      return this.findGetPathLayer(urlPath).getController();
+      return this.findGetPathLayer(req).getController();
     } on CanNotFoundPathLayer {
       return notFoundHandler;
     }

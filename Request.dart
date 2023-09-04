@@ -6,6 +6,7 @@ class Request {
   var query;
   var requestMethod;
   var requestPath;
+  Map<String?, String> params = {};
 
   Request(var originalHttpRequest) {
     final dividedRequest =
@@ -18,6 +19,7 @@ class Request {
     parseHeader(requestHeader);
     parseBody(requestBody);
   }
+
   parseRequestLine(requestLine) {
     final requestLineElems = requestLine.split(' ');
 

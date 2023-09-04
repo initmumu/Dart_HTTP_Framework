@@ -1,6 +1,5 @@
 import 'Dattp.dart';
 import 'dart:io';
-import 'dart:typed_data';
 
 final int PORT = 8080;
 
@@ -16,6 +15,10 @@ void main() {
     var imageFile = File(filePath).readAsBytesSync();
 
     res.send(imageFile);
+  });
+
+  app.get('/param_test/:num/nested', (req, res) {
+    res.text(req.params['num']);
   });
 
   app.get('/', (req, res) {

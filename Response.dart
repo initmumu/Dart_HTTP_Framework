@@ -25,7 +25,7 @@ class Response {
     this.header['contentLength'] = body.length;
   }
 
-  void text(String body) {
+  void text(String? body) {
     this.body = body;
     this.header['contentType'] = "text/plain; charset=utf-8";
 

@@ -24,7 +24,7 @@ class Dattp {
 
           switch (req.requestMethod) {
             case "GET":
-              this.router.findGetController(req.requestPath)(req, res);
+              this.router.findGetController(req)(req, res);
               break;
             case "POST":
               this.router.findPostController(req.requestPath)(req, res);
