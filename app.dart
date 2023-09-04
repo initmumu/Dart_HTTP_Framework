@@ -6,23 +6,29 @@ final int PORT = 8080;
 void main() {
   final app = Dattp();
 
-  app.post('/post-test', (req, res) {
-    res.text("post test");
+  app.get('/file-test-jpeg', (req, res) {
+    res.sendFile('public/jpeg_test_image.jpg');
   });
 
-  app.get('/pororo', (req, res) {
-    var filePath = 'public/jpeg_test_image.jpg';
-    var imageFile = File(filePath).readAsBytesSync();
-
-    res.send(imageFile);
+  app.get('/file-test-png', (req, res) {
+    res.sendFile('public/png_test_image.png');
   });
 
-  app.get('/param_test/:num/nested', (req, res) {
-    res.text(req.params['num']);
+  app.get('/error/xlsx', (req, res) {
+    res.sendFile('public/xlsx_test_file.xlsx');
   });
 
-  app.get('/', (req, res) {
-    res.text("Main Page 입니다!");
+  app.get('/success/xlsx', (req, res) {
+    res.download('public/xlsx_test_file.xlsx');
+  });
+
+  app.get('/text', (req, res) {
+    res.send("text");
+  });
+
+  app.get('/json', (req, res) {
+    var resp = {"코리언": 10};
+    res.send(resp);
   });
 
   app.listen(PORT, () {

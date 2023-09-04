@@ -44,7 +44,6 @@ class Router {
     PathLayer currentPathLayer = this.rootGetPathLayer;
     while (urlSplited.length != 0) {
       String? nextPath;
-      print(currentPathLayer.curPath);
       if (!currentPathLayer.subPath.containsKey(urlSplited[0]) &&
           !currentPathLayer.hasVariableLayer) {
         throw CanNotFoundPathLayer();

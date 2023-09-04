@@ -1,6 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
+import 'Exception/FileIsNotExist.dart';
+import 'Exception/ParameterError.dart';
+import 'Exception/UnsupportedFileFormat.dart';
+import 'util/MimeTypeChecker.dart';
 import 'httpStatusCode.dart';
+import 'util/writeHeader.dart';
 
 class Response {
   var header;
@@ -18,16 +24,54 @@ class Response {
     this.statusCode = status;
   }
 
-  void send(var body) {
-    this.body = body;
-    this.header['contentType'] = "image/jpeg";
-
-    this.header['contentLength'] = body.length;
+  void send(dynamic body) {
+    if (body is String)
+      this._text(body);
+    else if (body is Map) this._json(body);
   }
 
-  void text(String? body) {
+  void sendFile(String filePath) {
+    File file = File(filePath);
+    var fileType = MimeTypeChecker.checkMimeType(file);
+
+    switch (fileType) {
+      case "JPEG":
+        this.body = file.readAsBytesSync();
+        this.header['Content-Type'] = "image/jpeg";
+        this.header['Content-Length'] = this.body.length;
+        break;
+      case "PNG":
+        this.body = file.readAsBytesSync();
+        this.header['Content-Type'] = "image/png";
+        this.header['Content-Length'] = file.lengthSync();
+        break;
+      case "Unsupported":
+        throw UnsupportedFileFormat();
+    }
+  }
+
+  void download(String filePath) {
+    File file = File(filePath);
+    if (!file.existsSync()) throw FileIsNotExist();
+    String fileName = filePath.split('/').last;
+
+    this.body = file.readAsBytesSync();
+    this.header['Content-Type'] = "application/octet-stream";
+    this.header['Content-Length'] = file.lengthSync();
+    this.header['Content-Disposition'] = 'attachment; filename="$fileName"';
+  }
+
+  void _json(Map jsonData) {
+    String jsonString = jsonEncode(jsonData);
+    this.body = jsonString;
+    this.header['Content-Type'] = "application/json";
+
+    this.calcContentLength();
+  }
+
+  void _text(String? body) {
     this.body = body;
-    this.header['contentType'] = "text/plain; charset=utf-8";
+    this.header['Content-Type'] = "text/plain; charset=utf-8";
 
     this.calcContentLength();
   }
@@ -37,23 +81,15 @@ class Response {
     this.header['contentLength'] = contentUtf8.length;
   }
 
-  String makeStartLine() {
-    final startLine =
-        '${this.httpVersion} ${this.statusCode} ${httpStatusCode[this.statusCode]}';
-    return startLine;
-  }
+  String makeHeader() {
+    final responseHeader = StringBuffer();
 
-  String makeResponse() {
-    final response = StringBuffer();
+    writeHeader.addStatusLine(
+        responseHeader, this.httpVersion, this.statusCode);
+    for (var entry in this.header.entries)
+      writeHeader.addHeader(responseHeader, entry.key, entry.value);
+    writeHeader.end(responseHeader);
 
-    response.write('${this.makeStartLine()}\r\n');
-    response.write('Content-Type: ${this.header["contentType"]}\r\n');
-    response.write('Content-Length: ${this.header["contentLength"]}\r\n');
-    response.write('\r\n');
-
-    if (this.header['contentType'] != "image/jpeg")
-      response.write('${this.body}');
-
-    return response.toString();
+    return responseHeader.toString();
   }
 }
