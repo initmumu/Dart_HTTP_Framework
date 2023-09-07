@@ -3,7 +3,8 @@ import '../httpStatusCode.dart';
 class writeHeader {
   static void addStatusLine(
       StringBuffer header, String httpVersion, int statusCode) {
-    header.write("${httpVersion} ${statusCode} ${httpStatusCode[statusCode]}");
+    header.write(
+        "${httpVersion} ${statusCode} ${httpStatusCode[statusCode]}\r\n");
   }
 
   static void addHeader(StringBuffer header, String property, dynamic value) {

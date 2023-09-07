@@ -1,9 +1,8 @@
 import 'Dattp.dart';
-import 'dart:io';
 
-final int PORT = 8080;
+const int PORT = 8080;
 
-void main() {
+void main(List<String> args) {
   final app = Dattp();
 
   app.get('/file-test-jpeg', (req, res) {
@@ -27,7 +26,7 @@ void main() {
   });
 
   app.get('/json', (req, res) {
-    var resp = {"코리언": 10};
+    var resp = {"JsonTest": "한글 유니코드 지원"};
     res.send(resp);
   });
 
