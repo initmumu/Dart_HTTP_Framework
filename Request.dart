@@ -52,4 +52,8 @@ class Request {
         break;
     }
   }
+
+  void printHeader() {
+    print(this.header);
+  }
 }

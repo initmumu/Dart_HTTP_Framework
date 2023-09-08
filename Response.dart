@@ -27,11 +27,17 @@ class Response {
   void send(dynamic body) {
     if (body is String)
       this._text(body);
-    else if (body is Map) this._json(body);
+    else if (body is Map<String, String>) this._json(body);
   }
 
-  void sendFile(String filePath) {
-    File file = File(filePath);
+  void sendFile(String filePath, {File? staticFile = null}) {
+    File file;
+    if (staticFile == null) {
+      file = File(filePath);
+    } else {
+      file = staticFile;
+    }
+
     var fileType = MimeTypeChecker.checkMimeType(file);
 
     switch (fileType) {
@@ -46,14 +52,21 @@ class Response {
         this.header['Content-Length'] = file.lengthSync();
         break;
       case "Unsupported":
-        throw UnsupportedFileFormat();
+        this.download(file);
+        break;
     }
   }
 
-  void download(String filePath) {
-    File file = File(filePath);
+  void download(args) {
+    File file;
+    if (args is String)
+      file = File(args);
+    else if (args is File)
+      file = args;
+    else
+      throw Exception();
     if (!file.existsSync()) throw FileIsNotExist();
-    String fileName = filePath.split('/').last;
+    String fileName = file.uri.pathSegments.last;
 
     this.body = file.readAsBytesSync();
     this.header['Content-Type'] = "application/octet-stream";
@@ -86,7 +99,7 @@ class Response {
 
     writeHeader.addStatusLine(
         responseHeader, this.httpVersion, this.statusCode);
-    for (var entry in this.header.entries)
+    for (String entry in this.header.entries)
       writeHeader.addHeader(responseHeader, entry.key, entry.value);
     writeHeader.end(responseHeader);
 

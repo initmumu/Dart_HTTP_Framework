@@ -1,9 +1,12 @@
+import '../DefaultHandler/staticFileTransfer.dart';
 import '../Exception/CanNotFoundPathLayer.dart';
+import '../Exception/FileIsNotExist.dart';
 import '../Exception/ParameterError.dart';
 import '../Request.dart';
 import '../Response.dart';
 import '../DefaultHandler/notFoundHandler.dart';
 import 'PathLayer.dart';
+import 'dart:io';
 
 class Router {
   PathLayer rootGetPathLayer = PathLayer();
@@ -12,6 +15,14 @@ class Router {
 
   Router() {
     postRouteInfo = {};
+  }
+
+  Function findStaticResource(Request req, File resource) {
+    if (resource.existsSync()) {
+      return staticFileTransferHandler;
+    } else {
+      throw FileIsNotExist();
+    }
   }
 
   void registerGetPath(

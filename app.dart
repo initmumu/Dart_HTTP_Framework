@@ -5,6 +5,8 @@ const int PORT = 8080;
 void main(List<String> args) {
   final app = Dattp();
 
+  app.static('public');
+
   app.get('/file-test-jpeg', (req, res) {
     res.sendFile('public/jpeg_test_image.jpg');
   });
@@ -28,6 +30,11 @@ void main(List<String> args) {
   app.get('/json', (req, res) {
     var resp = {"JsonTest": "한글 유니코드 지원"};
     res.send(resp);
+  });
+
+  app.get('/print/header', (req, res) {
+    print(req.header);
+    res.send(req.header);
   });
 
   app.listen(PORT, () {

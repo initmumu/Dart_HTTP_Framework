@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'Exception/FileIsNotExist.dart';
 import 'Request.dart';
 import 'Response.dart';
 import 'router/Router.dart';
@@ -7,7 +8,8 @@ import 'DefaultHandler/unsupportedFileFormatHandler.dart';
 import 'Exception/UnsupportedFileFormat.dart';
 
 class Dattp {
-  var router;
+  late Router router;
+  String staticResourceDirectory = 'zpublic';
 
   Dattp() {
     router = Router();
@@ -27,14 +29,22 @@ class Dattp {
         switch (req.requestMethod) {
           case "GET":
             try {
-              this.router.findGetController(req)(req, res);
+              this.router.findStaticResource(req,
+                      File(this.staticResourceDirectory + req.requestPath))(req,
+                  res, File(this.staticResourceDirectory + req.requestPath));
               break;
-            } on UnsupportedFileFormat catch (e) {
-              print(e.toString());
+            } on FileIsNotExist {
+              try {
+                this.router.findGetController(req)(req, res);
+                break;
+              } on UnsupportedFileFormat {
+                unsupportedFileFormatHandler(req, res);
+                break;
+              }
+            } on UnsupportedFileFormat {
               unsupportedFileFormatHandler(req, res);
               break;
             }
-
           case "POST":
             this.router.findPostController(req.requestPath)(req, res);
             break;
@@ -43,6 +53,10 @@ class Dattp {
         client.close();
       });
     }
+  }
+
+  static(String staticResourceDirectory) {
+    this.staticResourceDirectory = staticResourceDirectory;
   }
 
   get(String urlPath, void Function(Request, Response) controller) {
